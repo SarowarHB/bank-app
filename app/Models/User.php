@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Library\Enum;
+use Laravel\Sanctum\HasApiTokens;
+use Laravel\Jetstream\HasProfilePhoto;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
-use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -27,6 +28,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'account_type',
+        'balance',
     ];
 
     /**
@@ -58,4 +61,17 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+     /*=====================Eloquent Relations======================*/
+     public function transactions()
+     {
+         return $this->hasMany(Transaction::class, 'user_id', 'id');
+     }
+
+     /*=====================Helper ==========================*/
+     public function userTotalWithdrawAmount()
+     {
+        return Transaction::where('transaction_type',  Enum::TRANSACTION_TYPE_WITHDRAW)
+                            ->where('user_id', $this->id)->sum('amount');
+     }
 }
