@@ -12,10 +12,10 @@ class Helper
         if($amount > 0){
             if($user->account_type == Enum::ACCOUNT_TYPE_INDIVIDUAL || $user->userTotalWithdrawAmount()>50000){
                 //if user type is individual or total withdraw amount is getter then 50000
-                return $amount*0.015;
+                return $amount*(0.015/(float)100);
             }else{
                  //if user type is Business and total withdraw amount is less then 50000
-                return $amount*0.025;
+                return $amount*(0.025/(float)100);
             }
         }else{
             return 0.0;
